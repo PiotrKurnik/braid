@@ -26,7 +26,6 @@
                    :thread-ids (ds/maybe [any?])
                    :error? boolean?
                    :loading? boolean?}})
-
        (core/register-events!
          {:braid.search/update-query!
           (fn [{db :db} [_ query]]
@@ -110,10 +109,13 @@
           (fn [{:as ev-msg :keys [?data ?reply-fn user-id]}]
             ; this can take a while, so move it to a future
             (future
+              (println ?data)
               (let [user-tags (tag/tag-ids-for-user user-id)
                     filter-tags (fn [t] (update-in t [:tag-ids] (partial into #{} (filter user-tags))))
                     thread-ids (search/search-threads-as user-id ?data)
                     threads (map (comp filter-tags thread/thread-by-id)
                                  (take 25 thread-ids))]
                 (when ?reply-fn
-                  (?reply-fn {:threads threads :thread-ids thread-ids})))))}))))
+                  (?reply-fn {:threads threads :thread-ids thread-ids})))))})
+       (core/register-new-message-callback! #(println % )))))
+

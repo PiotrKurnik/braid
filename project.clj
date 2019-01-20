@@ -20,6 +20,7 @@
                  [com.taoensso/carmine "2.13.1" :exclusions [com.taoensso/encore]]
                  [image-resizer "0.1.9"]
                  [clojurewerkz/quartzite "2.0.0"]
+                 [clucie "0.4.2"]
                  [inliner "0.1.0"]
                  [cljstache "2.0.1"]
                  [mount "0.1.10"]
@@ -138,6 +139,8 @@
                            :verbose true}}]}
 
   :min-lein-version "2.5.0"
+
+  :jvm-opts ["-XX:MaxPermSize=128m" "-XX:+UseConcMarkSweepGC" "-XX:+CMSClassUnloadingEnabled"]`
 
   :profiles {:dev {:source-paths ["src" "dev-src"]
                    :global-vars {*assert* true}

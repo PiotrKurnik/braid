@@ -110,3 +110,10 @@
          :right 0
          :margin 0
          :line-height "2rem"}]]]]]])
+
+(defn alternative-login-styles []
+  [:.gateway
+   [:button vars/small-button-mixin]
+   ]
+  )
+

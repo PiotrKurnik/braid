@@ -53,6 +53,7 @@
   text 'foo'"
   [user-id [query group-id]]
   ; TODO: pagination?
+  (println "SEARCH: " query)
   (let [{:keys [text tags]} (parse-query query)
         search-db (db/db)
         tag-search (when (seq tags)
@@ -70,11 +71,12 @@
                                search-db
                                tags
                                group-id)))
+        tee (fn [x] (println x) x)
         text-search (when-not (string/blank? text)
-                      (if (elastic/elasticsearch-enabled?)
-
-                        (println "xxxx" (lucene/search text))
-                        #_(elastic/search-for {:text text
+                      (tee (lucene/search text))
+                      #_(if (elastic/elasticsearch-enabled?)
+          
+                        (elastic/search-for {:text text
                                              :group-id group-id
                                              :user-id user-id})
                         (set (d/q '[:find ?t-id (max ?time)
@@ -90,10 +92,11 @@
                                   search-db
                                   text
                                   group-id))))]
-    (->> (if (every? some? [text-search tag-search])
+    (map first text-search)
+    #_(->> (if (every? some? [text-search tag-search])
            (intersection text-search tag-search)
            (first (remove nil? [text-search tag-search])))
          (filter (comp (partial thread/user-can-see-thread? user-id) first))
          ; sorting the ids so we can have a consistent order of results
          (sort-by second #(compare %2 %1))
-         (map first))))
+         (map first)))) 

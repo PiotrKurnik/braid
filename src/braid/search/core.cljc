@@ -4,6 +4,7 @@
     #?@(:clj
          [[braid.core.server.db.tag :as tag]
           [braid.core.server.db.thread :as thread]
+          [braid.search.lucene :as lucene]
           [braid.search.server :as search]]
          :cljs
          [[clojure.string :as string]
@@ -107,15 +108,14 @@
        (core/register-server-message-handlers!
          {::search-ws
           (fn [{:as ev-msg :keys [?data ?reply-fn user-id]}]
-            ; this can take a while, so move it to a future
-            (future
-              (println ?data)
-              (let [user-tags (tag/tag-ids-for-user user-id)
-                    filter-tags (fn [t] (update-in t [:tag-ids] (partial into #{} (filter user-tags))))
-                    thread-ids (search/search-threads-as user-id ?data)
-                    threads (map (comp filter-tags thread/thread-by-id)
-                                 (take 25 thread-ids))]
-                (when ?reply-fn
-                  (?reply-fn {:threads threads :thread-ids thread-ids})))))})
-       (core/register-new-message-callback! #(println % )))))
+            (let [thread-ids (search/search-threads-as user-id ?data)
+                  threads (->> thread-ids
+                               (take 25)
+                               (map thread/thread-by-id))]
+              (println "THREAD_IDS" thread-ids)
+              (println "THREADS" threads)
+              (when ?reply-fn
+                (?reply-fn {:threads threads :thread-ids thread-ids}))))})
+
+       (core/register-new-message-callback! lucene/index-message!))))
 

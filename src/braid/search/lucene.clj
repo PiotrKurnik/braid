@@ -2,15 +2,22 @@
   (:require
    [clucie.core]
    [clucie.analysis]
-   [clucie.store]))
+   [clucie.store]
+   [clojure.string :as str]))
 
 ;; TODO
-;; tweak standard analyzer
 ;; use file store index in prod
-;; only pass necessary keys to lucene
-;; is there a way to have uuid stored as uuid instead of string?
 ;; add function to add old messages to index
+;; return tag search in braid.search.server
 
+
+;; LATER
+;; show error when qp-parser fails
+;; fix search bar drop characters
+;; fix 'timeout' message when do long/bad search followed by a good one
+;; only pass necessary keys to lucene
+;; when searching, show ui underneath showing query parser rules  ? * ~ 
+;; is there a way to have uuid stored as uuid instead of string?
 ;; maybe: change search to only respond with thread-ids (client then asks for threads it doesn't know)
 ;; autocomplete tags in search bar
 
@@ -25,10 +32,8 @@
                     [:content]
                     analyzer))
 
-
 (defn search [query]
-  (println "SEARCH INDEX" query)
-  (->> (clucie.core/search
+  (->> (clucie.core/qp-search
         index-store
         [{:content query}]
         1000 ; max-num

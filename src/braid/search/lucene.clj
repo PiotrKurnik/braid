@@ -3,14 +3,16 @@
    [clucie.core]
    [clucie.analysis]
    [clucie.store]
-   [clojure.string :as str]))
+   [clojure.string :as str]
+   [braid.core.server.conf :refer [config]]))
+
 
 ;; TODO
 ;; use file store index in prod
 ;; add function to add old messages to index
 ;; return tag search in braid.search.server
 
-
+ 
 ;; LATER
 ;; show error when qp-parser fails
 ;; fix search bar drop characters
@@ -23,7 +25,14 @@
 
 (defonce analyzer (clucie.analysis/standard-analyzer))
 
-(defonce index-store (clucie.store/memory-store))
+                                        ;"/home/piotr/ClojureProjects/braid/lucene-dir"
+
+#_(defonce index-store (clucie.store/disk-store
+                      (config :lucene-dir)))
+
+
+
+(defonce index-store (clucie.store/memory-store ))
 
 (defn index-message! [message]
   (println "ADD TO INDEX" message)

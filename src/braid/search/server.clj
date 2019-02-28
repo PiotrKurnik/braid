@@ -100,3 +100,65 @@
          ; sorting the ids so we can have a consistent order of results
          (sort-by second #(compare %2 %1))
          (map first)))) 
+
+
+(def get-messages 
+  (d/q '[:find ?mc
+         :where
+         [?m :message/content ?mc]]
+       (db/db)))
+
+(def message-id
+  (d/q '[:find ?lo ?ko
+         :where
+         [?mid :message/id ?some]
+         [?some :group/id ?ko]
+         [?ko :thread/id ?lo]] (db/db)))
+
+
+message-id  
+
+
+
+
+(count message-id)
+
+
+(def some-var 
+  (->  message-id
+       (vec)
+       (flatten)
+       (vec)))
+
+some-var
+
+
+
+(def pull-messages  
+  (d/pull-many (db/db) '[*] some-var ))
+
+pull-messages  
+
+(clojure.pprint/pprint (partition 3  pull-messages))
+
+(count pull-messages)
+
+
+(def partitioned
+  (partition 3 pull-messages))
+
+(first partitioned)
+
+
+
+
+(clojure.pprint/pprint partitioned)
+
+
+(nth pull-messages 2)
+
+(count pull-messages)
+
+
+pull-messages 
+

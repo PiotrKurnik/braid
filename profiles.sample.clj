@@ -18,6 +18,7 @@
    :github-client-id "..."
    :github-client-secret "..."
    :google-maps-api-key "" 
+   :lucene-dir "/home/piotr/ClojureProjects/lucene-dir"
    }
   }
  }

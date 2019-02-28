@@ -116,6 +116,6 @@
               (println "THREADS" threads)
               (when ?reply-fn
                 (?reply-fn {:threads threads :thread-ids thread-ids}))))})
-
+       #_(core/register-config-var! :lucene-dir)
        (core/register-new-message-callback! lucene/index-message!))))
 
